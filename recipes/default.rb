@@ -7,6 +7,8 @@
 # Licenced under the BSD
 #
 
+::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
+
 if not node.chef_server.attribute?('rabbitmq_password')
     node.set_unless['chef_server']['rabbitmq_password'] = secure_password
     Chef::Log.info('RabbitMQ Password: ' + node['chef_server']['rabbitmq_password'])
