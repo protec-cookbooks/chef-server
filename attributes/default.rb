@@ -1,1 +1,8 @@
 default['chef_server']['root_group'] = 'root'
+default['chef_server']['service_name'] = 'chef-server'
+default['chef_server']['validation_key_location'] = '/etc/chef/validation.pem'
+default['chef_server']['nginx']['ssl_certificate'] = '/etc/ssl/chef.crt'
+default['chef_server']['nginx']['ssl_certificate_key'] = '/etc/ssl/chef.key'
+default['chef_server']['nginx']['server_name'] = 'chef.dev'
+default['chef_server']['nginx']['access_log'] = '/var/log/nginx/chef-access.log'
+default['chef_server']['nginx']['error_log'] = '/var/log/nginx/chef-error.log'

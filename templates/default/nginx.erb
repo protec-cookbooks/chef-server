@@ -1,0 +1,43 @@
+upstream chef_webui {
+    server 127.0.0.1:4040;
+}
+
+upstream chef_api_local {
+    server 127.0.0.1:4000;
+}
+
+server {
+    listen   443 default_server ssl;
+    ssl_certificate <%= node['chef_server']['nginx']['ssl_certificate'] %>;
+    ssl_certificate_key <%= node['chef_server']['nginx']['ssl_certificate_key'] %>;
+
+    keepalive_timeout 60;
+    root /usr/share/nginx/www;
+    index index.php index.html index.htm;
+
+    server_name <%= node['chef_server']['nginx']['server_name'] %>;
+    access_log <%= node['chef_server']['nginx']['access_log'] %>;
+    error_log <%= node['chef_server']['nginx']['error_log'] %>;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+
+    location / {
+        # API
+        if ( $http_x_ops_timestamp != "" ) {
+            proxy_pass http://chef_api_local;
+            break;
+        }
+        # WebUI
+        proxy_pass http://chef_webui;
+    }
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    location ~ /\.ht {
+        deny all;
+    }
+}
